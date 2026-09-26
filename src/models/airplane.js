@@ -10,7 +10,12 @@ export default (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       this.hasMany(models.Flight,{
-        foreignKey:'airplaneId'
+        foreignKey:'airplaneId',
+        onDelete:'CASCADE'
+      });
+      this.hasMany(models.Seat,{
+        foreignKey:'airplaneId',
+        onDelete:'CASCADE'
       });
       // Will look for airplaneId in the codeBase -> Ans: Present in create-flight migration
     }
