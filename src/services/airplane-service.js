@@ -8,8 +8,7 @@ async function createAirplane(data) {
     try {
         const airplane=await airplnaeRepository.create(data);
         return airplane;
-} catch (error) {
-        console.log("REAL ERROR:", error);
+    } catch (error) {
         throw new appError(error.message,StatusCodes.INTERNAL_SERVER_ERROR);
     }
 }

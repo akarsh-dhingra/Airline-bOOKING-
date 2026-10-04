@@ -1,9 +1,8 @@
 // We will here interact with our service 
 
 import { StatusCodes } from "http-status-codes";
-import successResponse from "../utils/common/success-response.js";
-import errorResponse from "../utils/common/error-response.js";
-import {AirportService} from "../services/index.js";
+import { AirportService } from "../services/index.js";
+import { successResponse,errorResponse } from "../utils/common/index.js";
 
 
 /**
@@ -21,13 +20,11 @@ export async function createAirport(req,res) {
             address:address,
             cityId:cityId
         });
-        successResponse.data=airport;
-        return res 
+        return res
                 .status(StatusCodes.CREATED)
-                .json(successResponse);
+                .json(successResponse(airport));
     } catch (error) {
-        errorResponse.error=error;
-        return res.status(error.statusCode).json(errorResponse);
+        return res.status(error.statusCode).json(errorResponse('Cannot create the airport',error));
     }
 }
 
@@ -39,27 +36,23 @@ export async function createAirport(req,res) {
 export async function getAirports(req,res) {
     try {
         const airports=await AirportService.getAirports();
-        successResponse.data=airports;
-        return res.status(StatusCodes.OK).json(successResponse);
+        return res.status(StatusCodes.OK).json(successResponse(airports));
     } catch (error) {
-        errorResponse.error=error;
-        return res.status(error.statusCode).json(errorResponse);
+        return res.status(error.statusCode).json(errorResponse('Cannot fetch data of all the airport',error));
     }
 }
 
 /**
- * POST : /airports/:id 
+ * GET : /airports/:id 
  * req-body {}
  */
 
 export async function getAirport(req,res){
     try {
         const airport=await AirportService.getAirport(req.params.id);
-        successResponse.data = airport;
-        return res.status(StatusCodes.OK).json(successResponse);
+        return res.status(StatusCodes.OK).json(successResponse(airport));
     } catch (error) {
-        errorResponse.error=error;
-        return res.status(error.StatusCode).json(errorResponse);
+        return res.status(error.statusCode).json(errorResponse('Cannot fetch data of the airport',error));
     }
 }
 
@@ -71,12 +64,8 @@ export async function getAirport(req,res){
 export async function destoryAirport(req,res){
     try {
         const airport=await AirportService.destoryAirport(req.params.id);
-        successResponse.data = airport;
-        return res.status(StatusCodes.OK).json(successResponse);
+        return res.status(StatusCodes.OK).json(successResponse(airport));
     } catch (error) {
-        errorResponse.error=error;
-        return res.status(error.StatusCode).json(errorResponse);
+        return res.status(error.statusCode).json(errorResponse('Cannot delete the airport',error));
     }
 }
-
-

@@ -1,8 +1,8 @@
 // We will here interact with our service 
 import { AirplaneService } from "../services/index.js";
 import { StatusCodes } from "http-status-codes";
-import successResponse from "../utils/common/success-response.js";
-import errorResponse from "../utils/common/error-response.js";
+import { successResponse,errorResponse } from "../utils/common/index.js";
+
 export async function createAirplane(req,res) {
     const {modelNumber,capacity}=req.body;
 
@@ -11,12 +11,10 @@ export async function createAirplane(req,res) {
                 modelNumber:modelNumber,
                 capacity:capacity
             })
-            successResponse.data=airplane
             return res.status(StatusCodes.ACCEPTED)
-                    .json(successResponse);
+                    .json(successResponse(airplane));
         } catch (error) {
-                errorResponse.error=error
-                return res.status(error.statusCode).json(errorResponse)
+                return res.status(error.statusCode).json(errorResponse('Cannot create the airplane',error))
         }
 }
 
@@ -28,52 +26,38 @@ export async function createAirplane(req,res) {
 export async function getAirplanes(req,res) {
     try {
         const airplanes=await AirplaneService.getAirplanes();
-        successResponse.data=airplanes;
         return res.
                 status(StatusCodes.OK)
-                .json(successResponse);
+                .json(successResponse(airplanes));
     } catch (error) {
-        errorResponse.error=error;
         return res.
                 status(error.statusCode)
-                .json(errorResponse);
+                .json(errorResponse('Cannot fetch data of all the airplane',error));
     }
 }
 
 export async function getAirplane(req,res) {
     try {
-        const airplanes=await AirplaneService.getAirplane(req.params.id);
-        successResponse.data=airplanes;
+        const airplane=await AirplaneService.getAirplane(req.params.id);
         return res.
                 status(StatusCodes.OK)
-                .json(successResponse);
+                .json(successResponse(airplane));
     } catch (error) {
-        errorResponse.error=error;
         return res.
                 status(error.statusCode)
-                .json(errorResponse);
+                .json(errorResponse('Cannot fetch data of the airplane',error));
     }
 }
 
 export async function destroyAirplane(req, res) {
     try {
         const airplanes = await AirplaneService.destroyAirplane(req.params.id);
-        successResponse.data = airplanes;
         return res
                 .status(StatusCodes.OK)
-                .json(successResponse);
+                .json(successResponse(airplanes));
     } catch(error) {
-        errorResponse.error = error;
         return res
                 .status(error.statusCode)
-                .json(errorResponse);
+                .json(errorResponse('Cannot delete the airplane',error));
     }
 }
-
-// async function getAirplanes(req,res) {
-//     try {
-//         const airplanes=await AirplaneService({})
-//     } catch (error) {
-        
-//     }
-// }

@@ -7,6 +7,10 @@ export default (sequelize, DataTypes) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
+
+    // An airplane has many seats a seat belongs to an 
+    // airplane 
+    
     static associate(models) {
       // define association here
       this.hasMany(models.Flight,{

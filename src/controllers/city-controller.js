@@ -7,10 +7,8 @@ export async function createCity(req,res) {
         const city=await CityService.createCity({
             name:req.body.name
         });
-        successResponse.data=city;
-        return res.status(StatusCodes.CREATED).json(successResponse);
+        return res.status(StatusCodes.CREATED).json(successResponse(city));
     } catch (error) {
-        errorResponse.error=error;
-        return res.status(error.statusCode).json(errorResponse);
+        return res.status(error.statusCode).json(errorResponse('Cannot create the city',error));
     }
 }

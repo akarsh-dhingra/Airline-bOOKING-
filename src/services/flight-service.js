@@ -2,7 +2,6 @@ import { StatusCodes } from "http-status-codes";
 import { FlightRepository } from "../repositories/index.js";
 import { Op } from "sequelize";
 import { appError } from "../utils/errors/app-error.js";
-import successResponse from "../utils/common/success-response.js";
 
 const flightRepository=new FlightRepository();
 
@@ -11,7 +10,6 @@ async function createFlight(data) {
         const flight=await flightRepository.create(data);
         return flight;
     } catch (error) {
-        console.log("REAL ERROR:", error);
         if(error.name=== 'SequelizeValidationError'){
             let explaination=[];
             error.errors.forEach((err) => {
@@ -75,7 +73,6 @@ async function getFlights(query) {
         sortFilter=sortfilters;
     }
     try {
-        console.log(customFilter);
         const flights=await flightRepository.getAllflights(customFilter,sortFilter);
         return flights;
     } catch (error) {
@@ -83,11 +80,39 @@ async function getFlights(query) {
     }
 }
 
-const flightService={createFlight,getFlights};
-export default flightService;
+async function getFlight(id){
+    try {
+        const flight=await flightRepository.get(id);
+        return flight;
+    } catch (error) {
+        if(error.statusCode===StatusCodes.NOT_FOUND){
+            throw new appError('The flight you requested is not present',error.statusCode);
+        }
+        throw new appError('Cannot fetch data of the flight',StatusCodes.INTERNAL_SERVER_ERROR);
+    }
+}
 
+async function updateSeats(data) {
+    try {
+        const response=await flightRepository.updateRemainingSeats(data.flightId,data.seats,data.dec);
+        return response;
+    } catch (error) {
+        // Errors the repository raised deliberately (404, 400 not enough seats)
+        // already carry a status code, so rethrow them untouched instead of
+        // flattening every failure into a 500.
+        if(error instanceof appError){
+            throw error;
+        }
+        throw new appError('Cannot Update data of the flight',StatusCodes.INTERNAL_SERVER_ERROR);
+    }
+}
+
+
+const flightService={createFlight,getFlights,getFlight,updateSeats};
+export default flightService;
 
 
 // Let's say there are 100 objects that need to go from 
 // DEL - MUM 
 // For 100 objects you"ll be making three separate queries , one for getting the deptAirportId , one for getting the 
+// 
